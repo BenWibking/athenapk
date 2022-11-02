@@ -7,6 +7,8 @@ target_sources(athenaPK PRIVATE
     cloud.cpp
     cluster.cpp
     cluster/hydrostatic_equilibrium_sphere.cpp
+    box.cpp
+    cluster/hydrostatic_equilibrium_box.cpp
     cpaw.cpp
     diffusion.cpp
     field_loop.cpp
