@@ -1,4 +1,3 @@
-
 <comment>
 problem   = Isolated galaxy cluster box
 
@@ -18,7 +17,7 @@ id         = prim      # Name to append to output
 <parthenon/time>
 cfl        = 0.3        # The Courant, Friedrichs, & Lewy (CFL) Number
 nlim       = -1         # cycle limit
-tlim       = 1e-3       # time limit
+tlim       = 1e-2       # time limit
 integrator  = vl2       # time integration algorithm
 perf_cycle_offset  = 10 # interval for stdout summary info
 
@@ -67,7 +66,7 @@ eos = adiabatic
 riemann = hlle
 reconstruction = plm
 use_scratch = false
-scratch_level = 0 # 0 is actual scratch (tiny); 1 is HBM
+scratch_level = 0   # 0 is actual scratch (tiny); 1 is HBM
 
 He_mass_fraction = 0.25
 
