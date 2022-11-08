@@ -5,8 +5,6 @@ target_sources(athenaPK PRIVATE
     advection.cpp
     blast.cpp
     cloud.cpp
-    cluster.cpp
-    cluster/hydrostatic_equilibrium_sphere.cpp
     box.cpp
     cluster/hydrostatic_equilibrium_box.cpp
     cpaw.cpp

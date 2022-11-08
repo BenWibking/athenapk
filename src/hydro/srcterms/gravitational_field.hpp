@@ -45,24 +45,32 @@ void GravitationalFieldSrcTerm(parthenon::MeshData<parthenon::Real> *md,
         auto &prim = prim_pack(b);
         const auto &coords = cons_pack.GetCoords(b);
 
-        const Real r =
-            sqrt(coords.x1v(i) * coords.x1v(i) + coords.x2v(j) * coords.x2v(j) +
-                 coords.x3v(k) * coords.x3v(k));
+        const Real x = std::abs(coords.x3v(i));
+        const Real y = std::abs(coords.x3v(j));
+        const Real z = std::abs(coords.x3v(k));
 
-        const Real g_r = gravitationalField.g_from_r(r);
+        const Real g_x = 0; // gravitationalField.g_from_x(x);
+        const Real g_y = 0; // gravitationalField.g_from_y(y);
+        const Real g_z = gravitationalField.g_from_z(z);
 
-        // Apply g_r as a source term
-        const Real den = prim(IDN, k, j, i);
-        const Real src =
-            (r == 0) ? 0
-                     : beta_dt * den * g_r / r; // FIXME watch out for previous /r errors
-        cons(IM1, k, j, i) -= src * coords.x1v(i);
-        cons(IM2, k, j, i) -= src * coords.x2v(j);
-        cons(IM3, k, j, i) -= src * coords.x3v(k);
-        // FIXME Double check this
-        cons(IEN, k, j, i) -= src * (coords.x1v(i) * prim(IV1, k, j, i) +
-                                     coords.x2v(j) * prim(IV2, k, j, i) +
-                                     coords.x3v(k) * prim(IV3, k, j, i));
+        // Apply g as a source term
+        const Real dens = prim(IDN, k, j, i);
+        Real p1 = cons(IM1, k, j, i);
+        Real p2 = cons(IM2, k, j, i);
+        Real p3 = cons(IM3, k, j, i);
+        const Real KE0 = 0.5 * p1*p1 + p2*p2 + p3*p3 / dens;
+
+        // compute new momenta
+        p1 += beta_dt * dens * g_x;
+        p2 += beta_dt * dens * g_y;
+        p3 += beta_dt * dens * g_z;
+        const Real KE1 = 0.5 * p1*p1 + p2*p2 + p3*p3 / dens;
+        const Real dKE = KE1 - KE0;
+
+        cons(IM1, k, j, i) = p1;
+        cons(IM2, k, j, i) = p2;
+        cons(IM3, k, j, i) = p3;
+        cons(IEN, k, j, i) += dKE;
       });
 }
 

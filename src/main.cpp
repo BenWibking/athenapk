@@ -80,9 +80,11 @@ int main(int argc, char *argv[]) {
     pman.app_input->ProblemGenerator = rand_blast::ProblemGenerator;
     Hydro::ProblemInitPackageData = rand_blast::ProblemInitPackageData;
     Hydro::ProblemSourceFirstOrder = rand_blast::RandomBlasts;
+  #if 0
   } else if (problem == "cluster") {
     pman.app_input->ProblemGenerator = cluster::ProblemGenerator;
     Hydro::ProblemSourceUnsplit = cluster::ClusterSrcTerm;
+  #endif
   } else if (problem == "box") {
     pman.app_input->ProblemGenerator = box::ProblemGenerator;
     Hydro::ProblemSourceUnsplit = box::ClusterSrcTerm;

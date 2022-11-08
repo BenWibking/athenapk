@@ -3,11 +3,11 @@
 // Copyright (c) 2021, Athena-Parthenon Collaboration. All rights reserved.
 // Licensed under the 3-clause BSD License, see LICENSE file for details
 //========================================================================================
-//! \file hydrostatic_equilbirum_sphere
+//! \file hydrostatic_equilbirum_box.hpp
 //  \brief Class for initializing a sphere in hydrostatic equiblibrium
 
-#ifndef CLUSTER_HYDROSTATIC_EQUILIBRIUM_SPHERE_HPP_
-#define CLUSTER_HYDROSTATIC_EQUILIBRIUM_SPHERE_HPP_
+#ifndef BOX_HYDROSTATIC_EQUILIBRIUM_BOX_HPP_
+#define BOX_HYDROSTATIC_EQUILIBRIUM_BOX_HPP_
 
 // Parthenon headers
 #include <mesh/domain.hpp>
@@ -39,13 +39,13 @@ class HydrostaticEquilibriumBox {
   parthenon::Real atomic_mass_unit_, k_boltzmann_;
 
   // Density to fix baryons at a radius (change to temperature?)
-  parthenon::Real R_fix_, rho_fix_;
+  parthenon::Real z_fix_, rho_fix_;
 
   // Molecular weights
   parthenon::Real mu_, mu_e_;
 
   // R mesh sampling parameters
-  parthenon::Real R_sampling_, max_dR_;
+  parthenon::Real z_sampling_, max_dz_;
 
   /************************************************************
    * Functions to build the cluster model
@@ -88,27 +88,27 @@ class HydrostaticEquilibriumBox {
     return T;
   }
 
-  // Get the dP/dr from radius and pressure, which we will     //
+  // Get the dP/dz from radius and pressure, which we will     //
   /************************************************************
-   *  dP_dr_from_r_P_functor
+   *  dP_dz_from_z_P_functor
    *
-   *  Functor class giving dP/dr (r,P)
+   *  Functor class giving dP/dz (z,P)
    *  which is used to compute the HSE profile
    ************************************************************/
-  class dP_dr_from_r_P_functor {
-    const HydrostaticEquilibriumBox<GravitationalField, EntropyProfile> &sphere_;
+  class dP_dz_from_z_P_functor {
+    const HydrostaticEquilibriumBox<GravitationalField, EntropyProfile> &box_;
 
    public:
-    dP_dr_from_r_P_functor(
-        const HydrostaticEquilibriumBox<GravitationalField, EntropyProfile> &sphere)
-        : sphere_(sphere) {}
-    parthenon::Real operator()(const parthenon::Real r, const parthenon::Real P) const {
+    dP_dz_from_z_P_functor(
+        const HydrostaticEquilibriumBox<GravitationalField, EntropyProfile> &box)
+        : box_(box) {}
+    parthenon::Real operator()(const parthenon::Real z, const parthenon::Real P) const {
 
-      const parthenon::Real g = sphere_.gravitational_field_.g_from_r(r);
-      const parthenon::Real K = sphere_.entropy_profile_.K_from_r(r);
-      const parthenon::Real rho = sphere_.rho_from_P_K(P, K);
-      const parthenon::Real dP_dr = -rho * g;
-      return dP_dr;
+      const parthenon::Real g = box_.gravitational_field_.g_from_z(z);
+      const parthenon::Real K = box_.entropy_profile_.K_from_z(z);
+      const parthenon::Real rho = box_.rho_from_P_K(P, K);
+      const parthenon::Real dP_dz = -rho * g;
+      return dP_dz;
     }
   };
 
@@ -135,21 +135,21 @@ class HydrostaticEquilibriumBox {
   template <typename View1D>
   class PRhoProfile {
    private:
-    const View1D R_;
+    const View1D z_;
     const View1D P_;
-    const HydrostaticEquilibriumBox &sphere_;
+    const HydrostaticEquilibriumBox &box_;
 
-    const int n_R_;
-    const parthenon::Real R_start_, R_end_;
+    const int n_z_;
+    const parthenon::Real z_start_, z_end_;
 
    public:
-    PRhoProfile(const View1D R, const View1D P,
-                const HydrostaticEquilibriumBox &sphere)
-        : R_(R), P_(P), sphere_(sphere), n_R_(R_.extent(0)), R_start_(R_(0)),
-          R_end_(R_(n_R_ - 1)) {}
+    PRhoProfile(const View1D z, const View1D P,
+                const HydrostaticEquilibriumBox &box)
+        : z_(z), P_(P), box_(box), n_z_(z_.extent(0)), z_start_(z_(0)),
+          z_end_(z_(n_z_ - 1)) {}
 
-    parthenon::Real P_from_r(const parthenon::Real r) const;
-    parthenon::Real rho_from_r(const parthenon::Real r) const;
+    parthenon::Real P_from_z(const parthenon::Real z) const;
+    parthenon::Real rho_from_z(const parthenon::Real z) const;
     std::ostream &write_to_ostream(std::ostream &os) const;
   };
 
@@ -159,11 +159,11 @@ class HydrostaticEquilibriumBox {
                          parthenon::IndexRange kb, Coords coords) const;
 
   template <typename View1D>
-  PRhoProfile<View1D> generate_P_rho_profile(const parthenon::Real R_start,
-                                             const parthenon::Real R_end,
-                                             const unsigned int n_R) const;
+  PRhoProfile<View1D> generate_P_rho_profile(const parthenon::Real z_start,
+                                             const parthenon::Real z_end,
+                                             const unsigned int n_z) const;
 };
 
 } // namespace box
 
-#endif // CLUSTER_HYDROSTATIC_EQUILIBRIUM_SPHERE_HPP_
+#endif // BOX_HYDROSTATIC_EQUILIBRIUM_BOX_HPP_

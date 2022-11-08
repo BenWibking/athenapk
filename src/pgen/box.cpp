@@ -35,7 +35,7 @@
 
 // Cluster headers
 #include "cluster/box_gravity.hpp"
-#include "cluster/entropy_profiles.hpp"
+#include "cluster/entropy_profiles_cartesian.hpp"
 #include "cluster/hydrostatic_equilibrium_box.hpp"
 
 namespace box {
@@ -104,7 +104,7 @@ void ProblemGenerator(MeshBlock *pmb, parthenon::ParameterInput *pin) {
      ************************************************************/
 
     // Build entropy_profile object
-    cluster::ACCEPTEntropyProfile entropy_profile(pin);
+    box::ACCEPTEntropyProfile entropy_profile(pin);
 
     /************************************************************
      * Build Hydrostatic Equilibrium Sphere
@@ -162,7 +162,7 @@ void ProblemGenerator(MeshBlock *pmb, parthenon::ParameterInput *pin) {
      ************************************************************/
     const auto &he_box =
         hydro_pkg
-            ->Param<HydrostaticEquilibriumBox<ClusterGravity, cluster::ACCEPTEntropyProfile>>(
+            ->Param<HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>>(
                 "hydrostatic_equilibrium_box");
 
     const auto P_rho_profile = he_box.generate_P_rho_profile<
@@ -176,20 +176,18 @@ void ProblemGenerator(MeshBlock *pmb, parthenon::ParameterInput *pin) {
         for (int i = ib.s; i <= ib.e; i++) {
 
           // Calculate radius
-          const Real r =
-              sqrt(coords.x1v(i) * coords.x1v(i) + coords.x2v(j) * coords.x2v(j) +
-                   coords.x3v(k) * coords.x3v(k));
+          const Real z = std::abs(coords.x3v(k));
 
           // Get pressure and density from generated profile
-          const Real P_r = P_rho_profile.P_from_r(r);
-          const Real rho_r = P_rho_profile.rho_from_r(r);
+          const Real P_z = P_rho_profile.P_from_z(z);
+          const Real rho_z = P_rho_profile.rho_from_z(z);
 
           // Fill conserved states, 0 initial velocity
-          u(IDN, k, j, i) = rho_r;
+          u(IDN, k, j, i) = rho_z;
           u(IM1, k, j, i) = 0.0;
           u(IM2, k, j, i) = 0.0;
           u(IM3, k, j, i) = 0.0;
-          u(IEN, k, j, i) = P_r / gm1;
+          u(IEN, k, j, i) = P_z / gm1;
         }
       }
     }
