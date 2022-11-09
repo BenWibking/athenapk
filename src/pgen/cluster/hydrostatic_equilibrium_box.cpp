@@ -3,7 +3,7 @@
 // Copyright (c) 2021, Athena-Parthenon Collaboration. All rights reserved.
 // Licensed under the 3-clause BSD License, see LICENSE file for details
 //========================================================================================
-//! \file hydrostatic_equilbirum_sphere.cpp
+//! \file hydrostatic_equilbirum_box.cpp
 //  \brief Creates pressure profile in hydrostatic equilbrium
 //
 // Setups up a pressure profile in hydrostatic equilbrium given an entropy
@@ -60,24 +60,24 @@ HydrostaticEquilibriumBox<GravitationalField, EntropyProfile>::
   z_sampling_ = pin->GetOrAddReal("problem/cluster", "z_sampling", 4.0);
   max_dz_ = pin->GetOrAddReal("problem/cluster", "max_dz", 1e-3);
 
-  // Test out the HSE sphere if requested
-  const bool test_he_sphere =
-      pin->GetOrAddBoolean("problem/cluster", "test_he_sphere", false);
-  if (test_he_sphere) {
-    const Real test_he_sphere_z_start = pin->GetOrAddReal(
-        "problem/cluster", "test_he_sphere_z_start_kpc", 1e-3 * units.kpc());
-    const Real test_he_sphere_z_end = pin->GetOrAddReal(
-        "problem/cluster", "test_he_sphere_z_end_kpc", 4000 * units.kpc());
-    const int test_he_sphere_n_z =
-        pin->GetOrAddInteger("problem/cluster", "test_he_sphere_n_z", 4000);
+  // Test out the HSE box if requested
+  const bool test_he_box =
+      pin->GetOrAddBoolean("problem/cluster", "test_he_box", false);
+  if (test_he_box) {
+    const Real test_he_box_z_start = pin->GetOrAddReal(
+        "problem/cluster", "test_he_box_z_start_kpc", 1e-3 * units.kpc());
+    const Real test_he_box_z_end = pin->GetOrAddReal(
+        "problem/cluster", "test_he_box_z_end_kpc", 4000 * units.kpc());
+    const int test_he_box_n_z =
+        pin->GetOrAddInteger("problem/cluster", "test_he_box_n_z", 4000);
     if (Globals::my_rank == 0) {
       typedef Kokkos::View<Real *, Kokkos::LayoutRight, HostMemSpace> View1D;
 
       auto P_rho_profile = generate_P_rho_profile<View1D>(
-          test_he_sphere_z_start, test_he_sphere_z_end, test_he_sphere_n_z);
+          test_he_box_z_start, test_he_box_z_end, test_he_box_n_z);
 
       std::ofstream test_he_file;
-      test_he_file.open("test_he_sphere.dat");
+      test_he_file.open("test_he_box.dat");
       P_rho_profile.write_to_ostream(test_he_file);
       test_he_file.close();
     }

@@ -23,13 +23,13 @@ namespace box {
 class ClusterGravity {
 
   // Radius underwhich to truncate
-  parthenon::Real smoothing_r_;
+  parthenon::Real smoothing_z_;
 
  public:
   ClusterGravity(parthenon::ParameterInput *pin) {
     Units units(pin);
 
-    smoothing_r_ = pin->GetOrAddReal("problem/cluster", "g_smoothing_radius", 0.0);
+    smoothing_z_ = pin->GetOrAddReal("problem/cluster", "g_smoothing_height", 0.0);
   }
 
   // Inline functions to compute gravitational acceleration
