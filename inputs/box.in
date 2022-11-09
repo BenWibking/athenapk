@@ -15,16 +15,16 @@ dt         = 1.e-3     # Time increment between outputs
 id         = prim      # Name to append to output
 
 <parthenon/time>
-cfl        = 0.3        # The Courant, Friedrichs, & Lewy (CFL) Number
+cfl        = 0.2        # The Courant, Friedrichs, & Lewy (CFL) Number
 nlim       = -1         # cycle limit
 tlim       = 1e-2       # time limit
-integrator  = vl2       # time integration algorithm
+integrator  = rk2       # time integration algorithm
 perf_cycle_offset  = 10 # interval for stdout summary info
 
 
 <parthenon/mesh>
 refinement  = static
-nghost = 2
+nghost = 4
 
 nx1        = 64       # Number of zones in X1-direction
 x1min      =-0.1       # minimum value of X1
@@ -63,40 +63,22 @@ nx3        = 32        # Number of zones in X3-direction
 <hydro>
 gamma = 1.6666666666666667 # gamma = C_p/C_v
 eos = adiabatic
-riemann = hlle
-reconstruction = plm
+riemann = hllc
+reconstruction = ppm
 use_scratch = false
 scratch_level = 0   # 0 is actual scratch (tiny); 1 is HBM
 
 He_mass_fraction = 0.25
 
 <units>
-#Units parameters
 code_length_cgs = 3.085677580962325e+24
 code_mass_cgs = 1.98841586e+47
 code_time_cgs = 3.15576e+16
 
 <problem/cluster>
-hubble_parameter = 0.0715898515654728
 
-#Which gravitational fields to include
-include_nfw_g = True
-which_bcg_g = HERNQUIST
-include_smbh_g = True
-
-#NFW parameters
-c_nfw = 6.0
-M_nfw_200 = 10.000000000000002
-
-#BCG parameters
-M_bcg_s = 0.0010000000000000002
-R_bcg_s = 0.004
-
-#SMBH parameters
-M_smbh = 1.0000000000000002e-06
-
-#Smooth gravity at origin, for numerical reasons
-g_smoothing_radius = 1e-6
+#Smooth gravity at midplane
+g_smoothing_height = 1e-6
 
 #Include gravity as a source term
 gravity_srcterm = true
@@ -112,7 +94,7 @@ R_fix = 2.0
 rho_fix = 0.01477557589278723
 
 #Building the radii at which to sample initial rho,P
-R_sampling = 4.0
-max_dR = 0.001
+z_sampling = 4.0
+max_dz = 0.001
 
-test_he_sphere = true
+test_he_box = true
