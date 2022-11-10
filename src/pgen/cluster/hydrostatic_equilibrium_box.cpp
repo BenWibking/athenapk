@@ -34,10 +34,9 @@ using namespace parthenon;
  * HydrostaticEquilibriumBox constructor
  ************************************************************/
 template <typename GravitationalField, typename EntropyProfile>
-HydrostaticEquilibriumBox<GravitationalField, EntropyProfile>::
-    HydrostaticEquilibriumBox(ParameterInput *pin,
-                                 GravitationalField gravitational_field,
-                                 EntropyProfile entropy_profile)
+HydrostaticEquilibriumBox<GravitationalField, EntropyProfile>::HydrostaticEquilibriumBox(
+    ParameterInput *pin, GravitationalField gravitational_field,
+    EntropyProfile entropy_profile)
     : gravitational_field_(gravitational_field), entropy_profile_(entropy_profile) {
   Units units(pin);
 
@@ -54,6 +53,7 @@ HydrostaticEquilibriumBox<GravitationalField, EntropyProfile>::
       pin->GetOrAddReal("problem/cluster", "z_fix", 1953.9724519818478 * units.kpc());
   rho_fix_ = pin->GetOrAddReal("problem/cluster", "rho_fix",
                                8.607065015897638e-30 * units.g() / pow(units.kpc(), 3));
+
   const Real gam = pin->GetReal("hydro", "gamma");
   const Real gm1 = (gam - 1.0);
 
@@ -61,13 +61,12 @@ HydrostaticEquilibriumBox<GravitationalField, EntropyProfile>::
   max_dz_ = pin->GetOrAddReal("problem/cluster", "max_dz", 1e-3);
 
   // Test out the HSE box if requested
-  const bool test_he_box =
-      pin->GetOrAddBoolean("problem/cluster", "test_he_box", false);
+  const bool test_he_box = pin->GetOrAddBoolean("problem/cluster", "test_he_box", false);
   if (test_he_box) {
     const Real test_he_box_z_start = pin->GetOrAddReal(
         "problem/cluster", "test_he_box_z_start_kpc", 1e-3 * units.kpc());
-    const Real test_he_box_z_end = pin->GetOrAddReal(
-        "problem/cluster", "test_he_box_z_end_kpc", 4000 * units.kpc());
+    const Real test_he_box_z_end =
+        pin->GetOrAddReal("problem/cluster", "test_he_box_z_end_kpc", 4000 * units.kpc());
     const int test_he_box_n_z =
         pin->GetOrAddInteger("problem/cluster", "test_he_box_n_z", 4000);
     if (Globals::my_rank == 0) {
@@ -134,8 +133,7 @@ Real HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::PRhoProfile<
  ************************************************************/
 template <typename EntropyProfile, typename GravitationalField>
 template <typename View1D>
-std::ostream &
-HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::PRhoProfile<
+std::ostream &HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::PRhoProfile<
     View1D>::write_to_ostream(std::ostream &os) const {
 
   const dP_dz_from_z_P_functor dP_dz_func(box_);
@@ -163,7 +161,7 @@ HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::PRhoProfile<
 template <typename EntropyProfile, typename GravitationalField>
 template <typename View1D, typename Coords>
 typename HydrostaticEquilibriumBox<EntropyProfile,
-                                      GravitationalField>::template PRhoProfile<View1D>
+                                   GravitationalField>::template PRhoProfile<View1D>
 HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::generate_P_rho_profile(
     IndexRange ib, IndexRange jb, IndexRange kb, Coords coords) const {
 
@@ -215,7 +213,7 @@ HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::generate_P_rho_pr
 template <typename EntropyProfile, typename GravitationalField>
 template <typename View1D>
 typename HydrostaticEquilibriumBox<EntropyProfile,
-                                      GravitationalField>::template PRhoProfile<View1D>
+                                   GravitationalField>::template PRhoProfile<View1D>
 HydrostaticEquilibriumBox<EntropyProfile, GravitationalField>::generate_P_rho_profile(
     const Real z_start, const Real z_end, const unsigned int n_z) const {
 
@@ -292,37 +290,41 @@ template class HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfi
 #endif
 
 // Instantiate generate_P_rho_profile
-template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::PRhoProfile<
-    Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper, parthenon::DevMemSpace>>
+template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
+    PRhoProfile<
+        Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper, parthenon::DevMemSpace>>
+        HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
+            generate_P_rho_profile<
+                Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper,
+                             parthenon::DevMemSpace>,
+                parthenon::UniformCartesian>(parthenon::IndexRange, parthenon::IndexRange,
+                                             parthenon::IndexRange,
+                                             parthenon::UniformCartesian) const;
+
+template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
+    PRhoProfile<
+        Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper, parthenon::DevMemSpace>>
     HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
         generate_P_rho_profile<Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper,
-                                            parthenon::DevMemSpace>,
-                               parthenon::UniformCartesian>(
-            parthenon::IndexRange, parthenon::IndexRange, parthenon::IndexRange,
-            parthenon::UniformCartesian) const;
-
-template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::PRhoProfile<
-    Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper, parthenon::DevMemSpace>>
-HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
-    generate_P_rho_profile<Kokkos::View<parthenon::Real *, parthenon::LayoutWrapper,
-                                        parthenon::DevMemSpace>>(
-        const parthenon::Real, const parthenon::Real, const unsigned int) const;
+                                            parthenon::DevMemSpace>>(
+            const parthenon::Real, const parthenon::Real, const unsigned int) const;
 
 #if (defined(KOKKOS_ENABLE_CUDA) || defined(KOKKOS_ENABLE_HIP))
-template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::PRhoProfile<
-    Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>>
-    HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
-        generate_P_rho_profile<
-            Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>,
-            parthenon::UniformCartesian>(parthenon::IndexRange, parthenon::IndexRange,
-                                         parthenon::IndexRange,
-                                         parthenon::UniformCartesian) const;
+template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
+    PRhoProfile<Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>>
+        HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
+            generate_P_rho_profile<
+                Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>,
+                parthenon::UniformCartesian>(parthenon::IndexRange, parthenon::IndexRange,
+                                             parthenon::IndexRange,
+                                             parthenon::UniformCartesian) const;
 
-template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::PRhoProfile<
-    Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>>
-HydrostaticEquilibriumBox<ClusterGravity, ACCEPTEntropyProfile>::
-    generate_P_rho_profile<Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>>(
-        const parthenon::Real, const parthenon::Real, const unsigned int) const;
+template HydrostaticEquilibriumBox<ClusterGravity, box::ACCEPTEntropyProfile>::
+    PRhoProfile<Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>>
+    HydrostaticEquilibriumBox<ClusterGravity, ACCEPTEntropyProfile>::
+        generate_P_rho_profile<
+            Kokkos::View<parthenon::Real *, LayoutWrapper, HostMemSpace>>(
+            const parthenon::Real, const parthenon::Real, const unsigned int) const;
 #endif
 
 } // namespace box

@@ -35,7 +35,7 @@ class ClusterGravity {
     T_phi0_ = pin->GetOrAddReal("problem/cluster", "gravitational_temperature", 2.0e6);
 
     const parthenon::Real mu = 0.6; // dimensionless mmw for ionized gas
-    g0_ = -2.0 * units.k_boltzmann() * T_phi0_ / (mu * units.atomic_mass_unit());
+    g0_ = 2.0 * units.k_boltzmann() * T_phi0_ / (mu * units.atomic_mass_unit());
   }
 
   // Inline functions to compute gravitational acceleration

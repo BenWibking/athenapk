@@ -87,7 +87,7 @@ gravity_srcterm = true
 K_0 = 8.851337676479303e-121
 K_100 = 1.3277006514718954e-119
 R_K = 0.1
-alpha_K = 1.1
+alpha_K = 0
 
 #Fix density at radius to close system of equations
 z_fix = 2.0
