@@ -24,24 +24,28 @@ class ClusterGravity {
 
   // Radius underwhich to truncate
   parthenon::Real smoothing_z_;
+  parthenon::Real g0_;
+  parthenon::Real T_phi0_;
 
  public:
   ClusterGravity(parthenon::ParameterInput *pin) {
     Units units(pin);
 
     smoothing_z_ = pin->GetOrAddReal("problem/cluster", "g_smoothing_height", 0.0);
+    T_phi0_ = pin->GetOrAddReal("problem/cluster", "gravitational_temperature", 2.0e6);
+
+    const parthenon::Real mu = 0.6; // dimensionless mmw for ionized gas
+    g0_ = -2.0 * units.k_boltzmann() * T_phi0_ / (mu * units.atomic_mass_unit());
   }
 
   // Inline functions to compute gravitational acceleration
-  KOKKOS_INLINE_FUNCTION parthenon::Real g_from_z(const parthenon::Real z_in) const
+  KOKKOS_INLINE_FUNCTION parthenon::Real g_from_z(const parthenon::Real z) const
       __attribute__((always_inline)) {
 
-    const parthenon::Real z = std::abs(z_in);
-
-    parthenon::Real g_z = 0;
+    parthenon::Real g_z = g0_ * std::tanh(smoothing_z_ / z);
 
     return g_z;
-  }  
+  }
 };
 
 } // namespace box

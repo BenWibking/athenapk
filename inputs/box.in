@@ -71,14 +71,14 @@ scratch_level = 0   # 0 is actual scratch (tiny); 1 is HBM
 He_mass_fraction = 0.25
 
 <units>
-code_length_cgs = 3.085677580962325e+24
-code_mass_cgs = 1.98841586e+47
-code_time_cgs = 3.15576e+16
+code_length_cgs = 3.085677580962325e+24 # 1 Mpc
+code_mass_cgs = 1.98841586e+47          # 1e14 Msun
+code_time_cgs = 3.15576e+16             # 1 Gyr
 
 <problem/cluster>
 
 #Smooth gravity at midplane
-g_smoothing_height = 1e-6
+g_smoothing_height = 1e-3
 
 #Include gravity as a source term
 gravity_srcterm = true
@@ -90,7 +90,7 @@ R_K = 0.1
 alpha_K = 1.1
 
 #Fix density at radius to close system of equations
-R_fix = 2.0
+z_fix = 2.0
 rho_fix = 0.01477557589278723
 
 #Building the radii at which to sample initial rho,P
