@@ -70,6 +70,11 @@ class HydrostaticEquilibriumBox {
     return rho;
   }
 
+  parthenon::Real rho_from_z(const parthenon::Real z) const {
+    const parthenon::Real rho = rho_fix_ * std::tanh(z_fix_ / z);
+    return rho;
+  }
+
   // Get total number density from density
   parthenon::Real n_from_rho(const parthenon::Real rho) const {
     const parthenon::Real n = rho / (mu_ * atomic_mass_unit_);
@@ -105,8 +110,7 @@ class HydrostaticEquilibriumBox {
     parthenon::Real operator()(const parthenon::Real z, const parthenon::Real P) const {
 
       const parthenon::Real g = box_.gravitational_field_.g_from_z(z);
-      const parthenon::Real K = box_.entropy_profile_.K_from_z(z);
-      const parthenon::Real rho = box_.rho_from_P_K(P, K);
+      const parthenon::Real rho = box_.rho_from_z(z);
       const parthenon::Real dP_dz = -rho * g;
       return dP_dz;
     }

@@ -78,7 +78,7 @@ code_time_cgs = 3.15576e+16             # 1 Gyr
 <problem/cluster>
 
 #Smooth gravity at midplane
-g_smoothing_height = 1e-3
+g_smoothing_height = 1e-2
 
 #Include gravity as a source term
 gravity_srcterm = true
@@ -90,8 +90,8 @@ R_K = 0.1
 alpha_K = 0
 
 #Fix density at radius to close system of equations
-z_fix = 2.0
-rho_fix = 0.01477557589278723
+z_fix = 1e-2
+rho_fix = 1e-28
 
 #Building the radii at which to sample initial rho,P
 z_sampling = 4.0
