@@ -55,6 +55,7 @@ set(PARTHENON_DISABLE_OPENMP ON CACHE BOOL "Disable OpenMP")
 set(PARTHENON_DISABLE_EXAMPLES ON CACHE BOOL "Don't build Parthenon examples.")
 set(PARTHENON_ENABLE_CPP17 ON CACHE BOOL "Use CPP17")
 set(PARTHENON_ENABLE_INIT_PACKING ON CACHE BOOL "Use pack-in-one also for Mesh::Init")
+set(PARTHENON_DISABLE_HDF5 ON)
 
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external/parthenon/CMakeLists.txt)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/parthenon parthenon)
