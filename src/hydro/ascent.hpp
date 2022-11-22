@@ -6,8 +6,11 @@
 // Licensed under the BSD 3-Clause License (the "LICENSE").
 //========================================================================================
 
+#include "interface/mesh_data.hpp"
+
 void RenderAscent(parthenon::MeshData<parthenon::Real> *md);
-void CreateBlueprintForAscent(parthenon::MeshData<parthenon::Real> *md);
+
+void CreateBlueprintFromMeshBlock(parthenon::MeshData<parthenon::Real> *md);
 
 
 #endif // ASCENT_HPP_
